@@ -29,15 +29,14 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteById(@PathVariable Long id) {
+    public String delete(@PathVariable Long id) {
         customerService.deleteById(id);
         return "Đã xóa khách hàng có ID: " + id;
     }
 
-    // @PutMapping("/{id}")
-    // public String putById(@PathVariable Long id) {
-    // customerService.putById(id);
-    // return "Đã cập nhật khách hàng có ID: " + id;
-    // }
+    @PutMapping("/{id}")
+    public Customer UpdateCustomer(@PathVariable long id, @RequestBody Customer details) {
+        return customerService.UpdateCustomer(id, details);
+    }
 
 }

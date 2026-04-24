@@ -11,7 +11,4 @@ import org.springframework.stereotype.Repository;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByName(String name);
 
-    List<Customer> deleteById(long id);
-
-    // List<Customer> putById(long id);
 }

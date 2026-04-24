@@ -14,7 +14,7 @@ public class CustomerService {
     // Hàm lưu khách hàng mới
     public Customer saveCustomer(Customer customer) {
         // Cậu có thể viết thêm logic ở đây: VD: Kiểm tra độ dài số điện thoại...
-        if (customer.getName() == null && customer.getName().trim().isEmpty()) {
+        if (customer.getName() == null || customer.getName().trim().isEmpty()) {
             System.out.println("Tên không được để trống");
             return null;
         }
@@ -36,11 +36,15 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public List<Customer> deleteById(long id) {
-        return customerRepository.deleteById(id);
+    public void deleteById(long id) {
+        customerRepository.deleteById(id);
     }
 
-    // public List<Customer> putById(long id) {
-    // return customerRepository.putById(id);
-    // }
+    public Customer UpdateCustomer(long id, Customer details) {
+        return customerRepository.findById(id).map(customer -> {
+            customer.setName(details.getName());
+            customer.setPhone(details.getPhone());
+            return customerRepository.save(customer);
+        }).orElse(null);
+    }
 }
