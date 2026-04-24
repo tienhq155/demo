@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Landing Page Test</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <h2>Đăng ký nhận tư vấn</h2>
+    <input type="text" id="name" placeholder="Tên của bạn"><br><br>
+    <input type="text" id="phone" placeholder="Số điện thoại"><br><br>
+    <button onclick="sendData()">Gửi thông tin</button>
+
+    <h2>Tìm khách hàng</h2>
+    <input type="text" id="searchName" placeholder="Tên khách hàng"><br><br>
+    <button onclick="showdata()">Tìm khách hàng</button>.0
+    <div id="resultArea" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;"></div>
+
+    <script>
+        function sendData() {
+            const data = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value
+            };
+
+            fetch('/api/customers/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    alert('Đã lưu khách hàng: ' + result.name);
+                    document.getElementById('name').value = '';
+                    document.getElementById('phone').value = '';
+                })
+                .catch(error => console.error('Lỗi:', error));
+        }
+
+        function showdata() {
+            const nameToSearch = document.getElementById('searchName').value;
+            const resultArea = document.getElementById('resultArea');
+            resultArea.innerHTML = "Đang tìm...";
+
+            fetch(`/api/customers/find?name=${nameToSearch}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        resultArea.innerHTML = "<p style='color:red;'>Không tìm thấy ai!</p>";
+                        return;
+                    }
+
+                    let html = "<h3>Kết quả tìm thấy:</h3><ul>";
+                    data.forEach(customer => {
+                        html += `<li>
+                                    <Strong>ID khách hàng: ${customer.id}</Strong> - Tên khách hàng: ${customer.name} - SĐT: ${customer.phone} 
+                                    <button onclick="deleteCustomer(${customer.id})">Xóa</button>
+                                    
+                                 </li>`;
+                    });
+                    html += "</ul>";
+                    resultArea.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    resultArea.innerHTML = "Có lỗi xảy ra khi kết nối Server!";
+                });
+        }
+
+
+        function deleteCustomer(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa khách hàng này không?")) {
+                fetch(`/api/customers/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Đã xóa thành công!");
+                            showdata();
+                        } else {
+                            alert("Xóa thất bại!");
+                        }
+                    })
+                    .catch(error => console.error('Lỗi:', error));
+            }
+        }
+    </script>
+</body>
+
+</html>
