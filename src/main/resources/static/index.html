@@ -13,61 +13,82 @@
     <button onclick="sendData()">Gửi thông tin</button>
 
     <h2>Tìm khách hàng</h2>
-    <input type="text" id="searchName" placeholder="Tên khách hàng"><br><br>
-    <button onclick="showdata()">Tìm khách hàng</button>
+    <input type="text" id="searchName" placeholder=""><br><br>
+    <button onclick="showdata()">Tìm Theo khách hàng</button>
     <div id="resultArea" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;"></div>
 
     <script>
-        function sendData() {
+        async function sendData() {
             const data = {
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value
             };
 
-            fetch('/api/customers/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(result => {
+            try {
+                const response = await fetch('/api/customers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
                     alert('Đã lưu khách hàng: ' + result.name);
+
                     document.getElementById('name').value = '';
                     document.getElementById('phone').value = '';
-                })
-                .catch(error => console.error('Lỗi:', error));
+                } else {
+                    const errorMsg = await response.text();
+                    alert('Lỗi: ' + errorMsg);
+                }
+
+            } catch (error) {
+                console.error('Lỗi:', error);
+                alert('Không kết nối được server');
+            }
         }
 
-        function showdata() {
-            const nameToSearch = document.getElementById('searchName').value;
+        async function showdata() {
+            const keyword = document.getElementById('searchName').value;
             const resultArea = document.getElementById('resultArea');
+
             resultArea.innerHTML = "Đang tìm...";
 
-            fetch(`/api/customers/find?name=${nameToSearch}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length === 0) {
-                        resultArea.innerHTML = "<p style='color:red;'>Không tìm thấy ai!</p>";
-                        return;
-                    }
+            try {
+                const response = await fetch(`/api/customers/search?q=${keyword}`);
 
-                    let html = "<h3>Kết quả tìm thấy:</h3><ul>";
-                    data.forEach(customer => {
-                        html += `<div style="margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 10px;">
-                            ID: <strong>${customer.id}</strong> <br>
-                                Tên: <input type="text" id="name-${customer.id}" value="${customer.name}">
-                                    SĐT: <input type="text" id="phone-${customer.id}" value="${customer.phone}">
-                                        <button onclick="updateData(${customer.id})" style="background: #4CAF50; color: white;">Lưu</button>
-                                        <button onclick="deleteCustomer(${customer.id})" style="background: #f44336; color: white;">Xóa</button>
-                                    </div>`;
-                    });
-                    html += "</ul>";
-                    resultArea.innerHTML = html;
-                })
-                .catch(error => {
-                    console.error('Lỗi:', error);
-                    resultArea.innerHTML = "Có lỗi xảy ra khi kết nối Server!";
+                if (!response.ok) {
+                    const err = await response.text();
+                    resultArea.innerHTML = `<p style="color:red;">Lỗi: ${err}</p>`;
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    resultArea.innerHTML = "<p style='color:red;'>Không tìm thấy ai!</p>";
+                    return;
+                }
+
+                let html = "<h3>Kết quả:</h3>";
+
+                data.forEach(customer => {
+                    html += `
+            <div>
+                ID: ${customer.id}<br>
+                Tên: <input id="name-${customer.id}" value="${customer.name}">
+                SĐT: <input id="phone-${customer.id}" value="${customer.phone}">
+                <button onclick="updateData(${customer.id})">Lưu</button>
+                <button onclick="deleteCustomer(${customer.id})">Xóa</button>
+            </div><hr>`;
                 });
+
+                resultArea.innerHTML = html;
+
+            } catch (error) {
+                console.error(error);
+                resultArea.innerHTML = "Lỗi kết nối server";
+            }
         }
 
 
