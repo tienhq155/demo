@@ -44,7 +44,7 @@ public class CustomerService {
 
         }
         return repository
-                .findByNameOrPhone(keyword, keyword)
+                .findByNameIgnoreCaseOrPhone(keyword, keyword)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

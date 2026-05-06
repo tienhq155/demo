@@ -12,7 +12,7 @@ import com.example.demo.entity.Customer;
 // Phép màu 3: Chỉ cần kế thừa JpaRepository, cậu có sẵn các hàm save(),
 // findAll(), delete() mà không cần viết SQL.
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-    List<Customer> findByNameOrPhone(String name, String Phone);
+    List<Customer> findByNameIgnoreCaseOrPhone(String name, String Phone);
 
     boolean existsByPhone(String phone);
 }
