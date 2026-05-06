@@ -26,9 +26,8 @@ public class CustomerService {
             throw new BadRequestException("Số điện thoại đã tồn tại");
         }
 
-        Customer customer = new Customer(request.getName(), request.getPhone());
+        Customer customer = new Customer(request.getName(), request.getPhone(), request.getPassword());
         Customer saved = repository.save(customer);
-
         return mapToResponse(saved);
     }
 

@@ -16,16 +16,18 @@ public class Customer {
     @Column(nullable = false, unique = true)
     private String phone;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String password;
 
     // Cậu cần tạo Constructor rỗng (bắt buộc cho JPA)
     public Customer() {
     }
 
-    public Customer(String name, String phone) {
+    public Customer(String name, String phone, String password) {
         this.name = name;
         this.phone = phone;
+        this.password = password;
+
     }
 
     // Getter và Setter (để lấy và gán giá trị)
