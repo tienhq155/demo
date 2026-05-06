@@ -16,6 +16,9 @@ public class Customer {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    @Column(nullable = false, unique = true)
+    private String password;
+
     // Cậu cần tạo Constructor rỗng (bắt buộc cho JPA)
     public Customer() {
     }
@@ -49,4 +52,13 @@ public class Customer {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 }

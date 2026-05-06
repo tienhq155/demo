@@ -41,14 +41,15 @@ public class CustomerService {
 
     public List<CustomerResponse> search(String keyword) {
         if (keyword == null || keyword.isBlank()) {
-            throw new BadRequestException("Keyword không được để trống");
-        }
+            throw new BadRequestException("Không được để trống");
 
+        }
         return repository
                 .findByNameOrPhone(keyword, keyword)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+
     }
 
     public void delete(Long id) {

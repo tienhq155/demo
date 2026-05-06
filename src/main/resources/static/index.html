@@ -10,6 +10,7 @@
     <h2>Đăng ký nhận tư vấn</h2>
     <input type="text" id="name" placeholder="Tên của bạn"><br><br>
     <input type="text" id="phone" placeholder="Số điện thoại"><br><br>
+    <input type="text" id="password" placeholder="Mật khẩu"><br><br>
     <button onclick="sendData()">Gửi thông tin</button>
 
     <h2>Tìm khách hàng</h2>
@@ -21,7 +22,8 @@
         async function sendData() {
             const data = {
                 name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value
+                phone: document.getElementById('phone').value,
+                password: document.getElementById('password').value
             };
 
             try {
@@ -37,6 +39,7 @@
 
                     document.getElementById('name').value = '';
                     document.getElementById('phone').value = '';
+                    document.getElementById('password').value = '';
                 } else {
                     const errorMsg = await response.text();
                     alert('Lỗi: ' + errorMsg);

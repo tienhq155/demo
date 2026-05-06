@@ -10,6 +10,17 @@ public class CustomerRequest { // DTO
     @Pattern(regexp = "^[0-9]{10}$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
+    @NotBlank(message = "Mật khẩu không được để trống")
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getName() {
         return name;
     }
