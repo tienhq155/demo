@@ -8,7 +8,9 @@ import com.example.demo.entity.Customer;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.repository.CustomerRepository;
+import com.example.demo.util.TextUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,9 @@ public class CustomerService {
         }
 
         Customer customer = new Customer(request.getName(), request.getPhone(), request.getPassword());
+        customer.setName(request.getName());
+        customer.setNameSearch(
+                TextUtils.removeAccent(request.getName()));
         Customer saved = repository.save(customer);
         return mapToResponse(saved);
     }
@@ -39,29 +44,38 @@ public class CustomerService {
         // List <Customer> customer = repositrory.findAll();
         // List <CustomerResponse> result = new ArrayList<>();
         // for (Customer c : customer){
-        //     result.add(mapToResponse(c));
+        // result.add(mapToResponse(c));
         // }
         // return result; chỉ là 2 cách viết, chức năng giống nhau
     }
 
     public List<CustomerResponse> search(String keyword) {
+
         if (keyword == null || keyword.isBlank()) {
-            throw new BadRequestException("Không được để trống");
-
+            throw new BadRequestException("Keyword không được để trống");
         }
-        return repository
-                .findByNameIgnoreCaseOrPhone(keyword, keyword)
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-
-        // List <Customer> customer = repository.findByNameIgnoreCaseorPhone(keyword,keyword);
-        // List <CustomerResponse> result = new ArrayList<>();
-        // for (Customer c : customer) {
-        //     ressult.add(mapToResponse(c));
+        String normalizedKeyword = TextUtils.removeAccent(keyword);
+        // return repository
+        // .findByNameSearchContainingOrPhoneContaining(normalizedKeyword,keyword)
+        // .stream()
+        // .map(this::mapToResponse)
+        // .collect(Collectors.toList());
         // }
-        // return result; chỉ là 2 cách viết, chức năng giống nhau 
+        List<Customer> customer = repository.findByNameSearchContainingOrPhoneContaining(normalizedKeyword, keyword);
+        List<CustomerResponse> result = new ArrayList<>();
+        for (Customer c : customer) {
+            result.add(mapToResponse(c));
+        }
+        return result;
     }
+
+    // List <Customer> customer =
+    // repository.findByNameIgnoreCaseorPhone(keyword,keyword);
+    // List <CustomerResponse> result = new ArrayList<>();
+    // for (Customer c : customer) {
+    // ressult.add(mapToResponse(c));
+    // }
+    // return result; chỉ là 2 cách viết, chức năng giống nhau
 
     public void delete(Long id) {
         if (!repository.existsById(id)) {

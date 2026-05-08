@@ -19,6 +19,9 @@ public class Customer {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String nameSearch;
+
     // Cậu cần tạo Constructor rỗng (bắt buộc cho JPA)
     public Customer() {
     }
@@ -37,6 +40,14 @@ public class Customer {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getNameSearch() {
+        return nameSearch;
+    }
+
+    public void setNameSearch(String nameSearch) {
+        this.nameSearch = nameSearch;
     }
 
     public String getName() {
