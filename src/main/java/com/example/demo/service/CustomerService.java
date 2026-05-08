@@ -36,6 +36,12 @@ public class CustomerService {
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+        // List <Customer> customer = repositrory.findAll();
+        // List <CustomerResponse> result = new ArrayList<>();
+        // for (Customer c : customer){
+        //     result.add(mapToResponse(c));
+        // }
+        // return result; chỉ là 2 cách viết, chức năng giống nhau
     }
 
     public List<CustomerResponse> search(String keyword) {
@@ -49,6 +55,12 @@ public class CustomerService {
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
 
+        // List <Customer> customer = repository.findByNameIgnoreCaseorPhone(keyword,keyword);
+        // List <CustomerResponse> result = new ArrayList<>();
+        // for (Customer c : customer) {
+        //     ressult.add(mapToResponse(c));
+        // }
+        // return result; chỉ là 2 cách viết, chức năng giống nhau 
     }
 
     public void delete(Long id) {
