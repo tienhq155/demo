@@ -1,8 +1,6 @@
 package com.example.demo.repository;
 
 import java.util.List;
-import java.text.Normalizer;
-import java.util.regex.Pattern;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +12,10 @@ import com.example.demo.entity.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByNameSearchContainingOrPhoneContaining(String name, String phone);
 
+    List<Customer> findByPhone(String phone);
+
     boolean existsByPhone(String phone);
+
 }
 
 // public interface CustomerRepository extends JpaRepository<Customer, Long> {

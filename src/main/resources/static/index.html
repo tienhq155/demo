@@ -12,7 +12,15 @@
     <input type="text" id="phone" placeholder="Số điện thoại"><br><br>
     <input type="text" id="password" placeholder="Mật khẩu"><br><br>
     <button onclick="sendData()">Gửi thông tin</button>
+    <h2>Đăng nhập</h2>
 
+    <input type="text" id="loginPhone" placeholder="Số điện thoại"><br><br>
+
+    <input type="password" id="loginPassword" placeholder="Mật khẩu"><br><br>
+
+    <button onclick="login()">Đăng nhập</button>
+
+    <div id="loginResult" style="margin-top: 10px;"></div>
     <h2>Tìm khách hàng</h2>
     <input type="text" id="searchName" placeholder=""><br><br>
     <button onclick="showdata()">Tìm Theo khách hàng</button>
@@ -135,6 +143,48 @@
                     }
                 })
                 .catch(error => console.error('Lỗi:', error));
+        }
+        function login() {
+
+            const data = {
+                phone: document.getElementById('loginPhone').value,
+                password: document.getElementById('loginPassword').value
+            };
+
+            fetch('/api/customers/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(async response => {
+
+                    const resultDiv =
+                        document.getElementById('loginResult');
+
+                    if (response.ok) {
+
+                        const user = await response.json();
+
+                        resultDiv.innerHTML =
+                            `<p style="color:green;">
+                        Đăng nhập thành công: ${user.name}
+                    </p>`;
+
+                    } else {
+
+                        const error = await response.text();
+
+                        resultDiv.innerHTML =
+                            `<p style="color:red;">
+                        ${error}
+                    </p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         }
     </script>
 </body>

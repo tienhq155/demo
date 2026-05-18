@@ -1,11 +1,13 @@
 package com.example.demo.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CustomerRequest;
 import com.example.demo.dto.CustomerResponse;
 import com.example.demo.entity.Customer;
 import com.example.demo.exception.BadRequestException;
+import com.example.demo.dto.LoginRequest;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.util.TextUtils;
@@ -18,17 +20,20 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository repository;
+    private final PasswordEncoder passwordencoder;
 
-    public CustomerService(CustomerRepository repository) {
+    public CustomerService(CustomerRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordencoder = passwordEncoder;
     }
 
     public CustomerResponse create(CustomerRequest request) {
         if (repository.existsByPhone(request.getPhone())) {
             throw new BadRequestException("Số điện thoại đã tồn tại");
         }
+        String hashedPassword = passwordencoder.encode(request.getPassword());
 
-        Customer customer = new Customer(request.getName(), request.getPhone(), request.getPassword());
+        Customer customer = new Customer(request.getName(), request.getPhone(), hashedPassword);
         customer.setName(request.getName());
         customer.setNameSearch(
                 TextUtils.removeAccent(request.getName()));
@@ -90,8 +95,21 @@ public class CustomerService {
 
         customer.setName(request.getName());
         customer.setPhone(request.getPhone());
+        customer.setNameSearch(TextUtils.removeAccent(request.getName()));
 
         return mapToResponse(repository.save(customer));
+    }
+
+    public CustomerResponse login(LoginRequest request) {
+        Customer customer = repository.findByPhone(request.getPhone())
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("Sai tên tài khoản hoặc mật khẩu"));
+        boolean isMatch = passwordencoder.matches(request.getPassword(), customer.getPassword());
+        if (!isMatch) {
+            throw new BadRequestException("Sai tên tài khoản hoặc mật khẩu");
+        }
+        return mapToResponse(customer);
     }
 
     private CustomerResponse mapToResponse(Customer c) {

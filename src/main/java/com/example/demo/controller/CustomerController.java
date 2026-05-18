@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.dto.CustomerRequest;
 import com.example.demo.dto.CustomerResponse;
+import com.example.demo.dto.LoginRequest;
 import com.example.demo.service.CustomerService;
 
 import jakarta.validation.Valid;
@@ -43,5 +44,10 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @PostMapping("/login")
+    public CustomerResponse login(@Valid @RequestBody LoginRequest request) {
+        return service.login(request);
     }
 }

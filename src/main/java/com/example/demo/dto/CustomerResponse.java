@@ -19,7 +19,7 @@ public class CustomerResponse {
         return name;
     }
 
-    public String getPhone() {
+    public String getphone() {
         return phone;
     }
 
